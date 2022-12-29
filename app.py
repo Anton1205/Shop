@@ -1,18 +1,12 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from models import db
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
-db = SQLAlchemy()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.sqlite'
 
 
-class Item(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Integer, primary_key=True)
-    isActive = 0
-    text = db.Column(db.Text, nullable=False)
-    amount = db.Column(db.Integer, primary_key=True)
+db.init_app(app)
 
 
 @app.route('/')
@@ -29,6 +23,21 @@ def about():
 @app.route('/catalog')
 def catalog():
     return render_template('catalog.html')
+
+
+@app.route('/create')
+def create():
+    return render_template('create.html')
+
+
+@app.route('/create_app')
+def create_app():
+    #app = Flask(__name__)
+
+    with app.app_context():
+        db.init_app()
+
+    return app
 
 
 if __name__ == '__main__':
