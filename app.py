@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from models import db
 
@@ -12,7 +12,8 @@ db.init_app(app)
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    items = Item.query.order_by(Item.price).all()
+    return render_template('home.html', data=items)
 
 
 @app.route('/about')
@@ -25,9 +26,25 @@ def catalog():
     return render_template('catalog.html')
 
 
-@app.route('/create')
+@app.route('/create', methods=['POST','GET'])
 def create():
-    return render_template('create.html')
+    if request.method == 'POST':
+        title = request.form['title']
+        price = request.form['price']
+        text = request.form['text']
+        amount = request.form['amount']
+
+        item = Item(title=title, price=price, text=text, amount=amount)
+
+        try:
+            db.session.add(item)
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'Произошла ошибка'
+
+    else:
+        return render_template('create.html')
 
 
 @app.route('/create_app')
