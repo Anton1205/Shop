@@ -13,5 +13,5 @@ class Item(db.Model):
     amount = db.Column(db.Integer, nullable=False)
 
 
- def __repr__(self):
-        return '<Item %r' % self.id
+def __repr__(self):
+    return '<Item %r' % self.id
